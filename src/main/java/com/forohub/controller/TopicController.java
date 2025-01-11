@@ -3,6 +3,7 @@ package com.forohub.controller;
 import com.forohub.entity.Topic;
 import com.forohub.service.TopicService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class TopicController {
         this.topicService = topicService;
     }
 
+    @Transactional
     @PostMapping
     public ResponseEntity<Topic> createTopic(@RequestBody Topic topic) {
         return ResponseEntity.ok(topicService.createTopic(topic));
@@ -34,11 +36,13 @@ public class TopicController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Topic> updateTopic(@PathVariable Long id, @RequestBody Topic topic) {
         return ResponseEntity.ok(topicService.updateTopic(id, topic));
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTopic(@PathVariable Long id) {
         topicService.deleteTopic(id);
