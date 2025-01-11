@@ -39,6 +39,10 @@ public class TopicController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Topic> getTopicById(@PathVariable Long id) {
+        if (id <= 0) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
         return topicService.getTopicById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
