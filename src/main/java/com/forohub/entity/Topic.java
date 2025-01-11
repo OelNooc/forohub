@@ -16,8 +16,13 @@ public class Topic {
     private String title;
 
     @Column(nullable = false)
-    private String description;
+    private String message;
 
+    @Column(nullable = false)
+    private String author;
+
+    @Column(nullable = false)
+    private String course;
 
     public Long getId() {
         return id;
@@ -35,11 +40,27 @@ public class Topic {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMessage() {
+        return message;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
     }
 }

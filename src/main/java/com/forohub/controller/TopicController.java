@@ -2,10 +2,12 @@ package com.forohub.controller;
 
 import com.forohub.entity.Topic;
 import com.forohub.service.TopicService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,8 +22,14 @@ public class TopicController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity<Topic> createTopic(@RequestBody Topic topic) {
-        return ResponseEntity.ok(topicService.createTopic(topic));
+    public ResponseEntity<?> createTopic(@RequestBody @Valid Topic topic) {
+
+        if (topicService.isDuplicateTopic(topic.getTitle(), topic.getMessage())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Topic with the same title and message already exists.");
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(topicService.createTopic(topic));
     }
 
     @GetMapping
@@ -38,7 +46,7 @@ public class TopicController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<Topic> updateTopic(@PathVariable Long id, @RequestBody Topic topic) {
+    public ResponseEntity<Topic> updateTopic(@PathVariable Long id, @RequestBody @Valid Topic topic) {
         return ResponseEntity.ok(topicService.updateTopic(id, topic));
     }
 

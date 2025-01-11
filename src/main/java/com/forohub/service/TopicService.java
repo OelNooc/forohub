@@ -33,7 +33,9 @@ public class TopicService {
                 .orElseThrow(() -> new RuntimeException("Topic not found"));
 
         topic.setTitle(topicDetails.getTitle());
-        topic.setDescription(topicDetails.getDescription());
+        topic.setMessage(topicDetails.getMessage());
+        topic.setAuthor(topicDetails.getAuthor());
+        topic.setCourse(topicDetails.getCourse());
 
         return topicRepository.save(topic);
     }
@@ -43,5 +45,9 @@ public class TopicService {
                 .orElseThrow(() -> new RuntimeException("Topic not found"));
 
         topicRepository.delete(topic);
+    }
+
+    public boolean isDuplicateTopic(String title, String message) {
+        return topicRepository.existsByTitleAndMessage(title, message);
     }
 }
