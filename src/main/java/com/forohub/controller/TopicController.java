@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/topics")
@@ -51,8 +52,21 @@ public class TopicController {
     @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Topic> updateTopic(@PathVariable Long id, @RequestBody @Valid Topic topic) {
-        return ResponseEntity.ok(topicService.updateTopic(id, topic));
+        Optional<Topic> existingTopic = topicService.getTopicById(id);
+        if (existingTopic.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Topic updatedTopic = existingTopic.get();
+        updatedTopic.setTitle(topic.getTitle());
+        updatedTopic.setMessage(topic.getMessage());
+        updatedTopic.setAuthor(topic.getAuthor());
+        updatedTopic.setCourse(topic.getCourse());
+
+        Topic savedTopic = topicService.createTopic(updatedTopic);
+        return ResponseEntity.ok(savedTopic);
     }
+
 
     @Transactional
     @DeleteMapping("/{id}")
