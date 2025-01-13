@@ -1,5 +1,6 @@
 package com.forohub.config;
 
+import com.forohub.service.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,11 +9,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfigurations {
+
+    private final TokenService tokenService;
+
+    public SecurityConfigurations(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -22,7 +29,7 @@ public class SecurityConfigurations {
                         .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new BasicAuthenticationFilter(authManagerBean()), BasicAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -34,10 +41,5 @@ public class SecurityConfigurations {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authManagerBean() throws Exception {
-        return authManager(new AuthenticationConfiguration());
     }
 }
